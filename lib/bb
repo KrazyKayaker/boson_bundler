@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env ruby
 #
 # ./bb - a CLI for boson_bundler
 #
@@ -18,17 +18,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-source /etc/profile
-source /usr/local/rvm/scripts/rvm
-self=$(readlink -f $0)
-bin_dir=`dirname $self`
-bb_cmd="${bin_dir}/lib/bb --backtrace $@"
-${bb_cmd}
-# This use of 'xit' is necessary, because after our conditional $? is replaced
-xit=$?
-if [ $xit == 200 ]; then
-  echo "$0: Detected failure in bundled Gems, attempting to correct..."
-  ${bb_cmd}
-  xit=$?
-fi
-exit $xit
+require 'rubygems'
+require 'boson'
+
+# Monkey-patch the local repo, so it's relative to this file
+module Boson
+    def local_repo
+        # Repo.new will automatically append ./commands to all the directories
+        Repo.new(File.expand_path("../..", __FILE__))
+    end
+end
+
+require 'boson/runners/bin_runner'
+
+Boson::BinRunner.start
