@@ -22,13 +22,13 @@ source /etc/profile
 source /usr/local/rvm/scripts/rvm
 self=$(readlink -f $0)
 bin_dir=`dirname $self`
-bb_cmd="${bin_dir}/lib/bb --backtrace $@"
-${bb_cmd}
+bb_cmd="${bin_dir}/lib/bb --backtrace"
+${bb_cmd} "$@"
 # This use of 'xit' is necessary, because after our conditional $? is replaced
 xit=$?
 if [ $xit == 200 ]; then
   echo "$0: Detected failure in bundled Gems, attempting to correct..."
-  ${bb_cmd}
+  ${bb_cmd} "$@"
   xit=$?
 fi
 exit $xit
