@@ -16,7 +16,6 @@
 # limitations under the License.
 #
 
-
 module BosonBundler
 	#Often we need to include bundled gems -- this function will provide us with a consistant method of doing that
 	# In the event that a bundled gem is either out of date or not installed, it'll automatically install the bundled
@@ -62,17 +61,35 @@ module BosonBundler
         setup_path(File.expand_path("../../bundles/#{bundle}", __FILE__))
     end
 
-    # This will load the bundle called "bundle" and run the ruby command "command", using argv as the arguments
-    # This function will import the execution of command into the current process.  This creates some interesting
-    # effects.  It allows you to add/remove/monkey-patch the system before "command" is loaded and ran.
-    # Whether this function returns or not is dependant on implementation details of "command"
-    def self.run(bundle, command, argv = Array.new())
-        setup(bundle)
+    # This will load "version" of "gem_name" and run "command", using "argv" as the arguments.
+    # Another way of explaining this is that it will import "command" and run it within the context of the
+    # current process.  This creates some interesting effects:  It allows you to add/remove/monkey-patch your process
+    # *before* "command" is loaded and ran.  Since this is all happening within the same ruby process globals, functions,
+    # class definitions, ect can all be shared.  It also allows you to run arbitrary code *after* command has finished (see warning below)
+    #
+    # WARNING:  Most "command" were not written to be invoked this way, so there maybe side-effects.  In addition this 
+    # function offers *no* seatbelts (read eval() is not used).
+    #
+    # Example: 
+=begin
+    module Chef
+        # (Re-)Configures the machine in an idempotant way
+        def chef
+            #load in the support library
+            require 'boson_bundler'
+            #imports the bundles/chef gems
+            BosonBundler.setup 'chef'
+    
+            # does the same as: "bundle exec chef-solo --help", but only from
+            # within the current process
+            BosonBundler.bin_path 'chef', 'chef-solo', %w( --help )
+        end
+    end
+=end
+    def self.bin_path(gem_name, command, argv = Array.new(), version = ">= 0")
         original_argv = ARGV.dup
         begin
-            version = ">= 0"
             ARGV.replace argv if argv != nil
-            gem_name = bundle 
 
             gem gem_name, version
             load Gem.bin_path(gem_name, command, version)
