@@ -1,0 +1,36 @@
+What is Boson?
+
+Boson is a simple framework for creating applications with snippets of code.  It is very similar to Thor but unlike Thor the snippets of code do not need to be aware of the fact that they're going to be running from Thor.
+
+What is Bundler?
+
+Bundler is a package management tool which allows you to sandbox, install, upgrade and isolate a collection of ruby libraries and their versions.
+
+What is Boson-Bundler?
+
+Boson-Bundler is a fusion of these two technologies, which give you the power to create small snippets of code which create an application.  This snippet of code (most likely) will have dependencies.  These dependencies will be tracked by Boson.  This tool *automatically* tracks these dependencies and will *automatically* install/upgrade them.
+
+How do I install it?
+
+Our current dependencies are:
+
+* rvm
+* boson + dependencies
+* bundler
+
+This system has only been tested with ruby 1.9.2, boson 0.3.4, and bundler 1.0.21.  Although newer version of these tools will "probably" work (perhaps, except boson2).
+
+How do I use it?
+
+First familiarize yourself with both boson and bundler.
+
+TODO:  Add docs here
+
+Why was this created?
+
+This was inspired by some work/research I'd done for Aprico Solutions.  We were using Amazon EC2 to deploy a suite of applications.  We wanted a simple way to track/install these utilities.  Bundler seemed to be the logical choice as each of these tools were rather self-contained.  However, we wanted an easily install and upgrade these tools, but only if they were used (as some of these tools were more administrative) - boson seems to solve this problem quite nicely.  Out of this idea boson_bundler was inspired and refined.
+
+Notices:
+
+This code is released under the same terms and conditions as opscode's chef utility (which makes deploying on ec2 a breeze).
+
