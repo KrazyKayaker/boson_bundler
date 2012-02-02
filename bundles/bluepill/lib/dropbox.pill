@@ -1,0 +1,25 @@
+#! /usr/bin/env ruby
+$:.unshift File.expand_path('..', __FILE__)
+$0 = File.absolute_path $0
+require 'rubygems'
+require 'bluepill'
+require 'logger'
+
+require 'pillbox'
+Bluepill.application(:dropbox, :foreground => false, :base_dir => PillBox.bluepill_base) do
+  process("dropbox") do
+    pid_file        File.join(ENV['HOME'], '.dropbox/dropbox.pid')
+
+    start_command   "/usr/bin/dropbox start"
+    stop_command    "/usr/bin/dropbox stop"
+#    restart_command "/usr/bin/sv restart runit-man"
+
+    start_grace_time   1.seconds
+    restart_grace_time 7.seconds
+    stop_grace_time    7.seconds
+
+#    checks :http, :within => 30.seconds, :retry_in => 7.seconds, :every => 30.seconds,
+#      :url => 'http://localhost:4567/', :kind => :success, :pattern => /html/, :timeout => 3.seconds
+  end
+end
+

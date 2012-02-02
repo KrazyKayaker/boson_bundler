@@ -1,3 +1,10 @@
+*~
+*.eml
+*.iml
+*.ipr
+*.iws
+.*.sw?
+.rake_test_cache
 config
 .bundle
 vendor/bundle
