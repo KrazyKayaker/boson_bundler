@@ -56,19 +56,27 @@ module BosonBundler
 		end
 	end
 
+    # Often we'd like to just refer to a bundle instead of a path.  This is merely a simple
+    # abstraction, so if/when these paths change.  It's all centralized into this single point.
+    # It also makes monkey-patching much easier
+    def self.bundle_path(bundle)
+        File.expand_path("../../bundles/#{bundle}", __FILE__)
+    end
+
     # This is just a simple courtsey wrapper around setup_path which provides a default path to the bundles
     def self.setup(bundle)
-        setup_path(File.expand_path("../../bundles/#{bundle}", __FILE__))
+        setup_path( bundle_path(bundle) )
     end
 
     # This will load "version" of "gem_name" and run "command", using "argv" as the arguments.
     # Another way of explaining this is that it will import "command" and run it within the context of the
     # current process.  This creates some interesting effects:  It allows you to add/remove/monkey-patch your process
-    # *before* "command" is loaded and ran.  Since this is all happening within the same ruby process globals, functions,
-    # class definitions, ect can all be shared.  It also allows you to run arbitrary code *after* command has finished (see warning below)
+    # *before* "command" is loaded and ran.  Since this is all happening within the same ruby process custom globals, functions,
+    # class definitions, ect can be defined before "command" is ran and will be accessable within "command".
+    # It also allows you to run arbitrary code *after* command has finished (see warning below)
     #
     # WARNING:  Most "command" were not written to be invoked this way, so there maybe side-effects.  In addition this 
-    # function offers *no* seatbelts (read eval() is not used).
+    # function offers *no* seatbelts (re: eval() is not used).
     #
     # Example: 
 =begin
